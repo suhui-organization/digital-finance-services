@@ -1,0 +1,37 @@
+# Go build artifacts
+/server
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+
+# Go workspace
+go.work
+
+# ai-service 独立仓库，不纳入此仓库
+ai-service/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+*.log

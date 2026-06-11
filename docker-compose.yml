@@ -1,0 +1,81 @@
+# =============================================================================
+# digital-finance-services (Go Backend) 独立部署文件
+# 包含: postgres + redis + go-backend
+# 镜像来源: SWR (华为云容器镜像服务)
+# =============================================================================
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: df-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-digital_finance}
+      POSTGRES_USER: ${POSTGRES_USER:-dfuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dfpass123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dfuser} -d ${POSTGRES_DB:-digital_finance}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - df-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: df-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - df-network
+
+  go-backend:
+    image: swr.ap-southeast-3.myhuaweicloud.com/digital-finance-commercial/go-backend:${TAG:-latest}
+    container_name: df-go-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-16080}:16080"
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-dfuser}:${POSTGRES_PASSWORD:-dfpass123}@postgres:5432/${POSTGRES_DB:-digital_finance}?sslmode=disable
+      REDIS_URL: redis:6379
+      AI_SERVICE_URL: http://ai-service:16081
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: "16080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - df-network
+
+volumes:
+  postgres_data:
+
+networks:
+  df-network:
+    name: digital-finance-network
+    driver: bridge
