@@ -60,7 +60,7 @@ CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs(created_at DESC)
 INSERT INTO users (username, password_hash, display_name, role, status)
 VALUES (
     'admin',
-    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+    '$2b$12$RjfzfXYRrRbaQm.jzSx3m.11hPRqbbPPFj13Ze6eWJwUSynnXkPDS',
     '超级管理员',
     'super_admin',
     'active'
