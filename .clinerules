@@ -1,0 +1,70 @@
+# =============================================================================
+# Cline Rules — digital-finance-services (Go 后端 API)
+# Go 1.25 + Gin + PostgreSQL + Redis + JWT
+# =============================================================================
+
+## 技术栈
+- 语言: Go 1.25
+- Web 框架: Gin
+- 数据库: PostgreSQL (lib/pq)
+- 缓存: Redis (go-redis/v9)
+- 认证: JWT (golang-jwt/jwt/v5)
+- 加密: golang.org/x/crypto (bcrypt)
+- 开发端口: 16080
+
+## 目录结构约定
+```
+cmd/
+  server/
+    main.go       # 入口文件
+internal/
+  handler/        # HTTP 处理器 (控制器层)
+  service/        # 业务逻辑层
+  repository/     # 数据访问层
+  model/          # 数据模型
+  middleware/      # 中间件 (认证、日志、CORS)
+  config/         # 配置管理
+migrations/       # 数据库迁移脚本
+```
+
+## 代码规范
+- 遵循 Go 官方代码风格 (gofmt / goimports)
+- 公开函数/类型首字母大写，私有函数/类型首字母小写
+- 错误处理: 不忽略任何 error，使用 fmt.Errorf + %w 包装
+- 日志使用标准库 log/slog
+- 使用 context.Context 传递请求上下文
+- 数据库操作使用 repository 模式
+
+## 分层架构
+```
+handler → service → repository → database
+    ↓        ↓
+  (DTO)    (Model)
+```
+- handler: 处理 HTTP 请求/响应，参数验证，调用 service
+- service: 业务逻辑，事务管理
+- repository: 数据访问，SQL 操作
+- model: 数据结构定义
+
+## API 设计规范
+- RESTful 风格
+- 统一响应格式: { "code": 0, "message": "success", "data": {} }
+- 分页参数: page (页码, 从1开始), pageSize (每页数量)
+- 错误码体系: 0=成功, 1xxx=参数错误, 2xxx=认证错误, 3xxx=业务错误, 5xxx=服务错误
+
+## 安全规范
+- 密码使用 bcrypt 加密存储
+- JWT token 有效期: access token 2小时, refresh token 7天
+- API 限流: 使用 Redis + 令牌桶算法
+- 所有公开 API 必须经过认证中间件（登录接口除外）
+
+## 测试
+- 单元测试: go test
+- 集成测试: 使用 testcontainers-go 启动 PostgreSQL/Redis
+- 覆盖率要求: >70%
+
+## Cline 行为规则
+- 修改后运行 `go vet ./...` 和 `go build ./...` 检查
+- 新增 API 端点需同步更新 API 文档
+- 数据库变更需创建新的 migration 文件
+- 修改 model 结构体后，检查所有 handler/repository 引用
