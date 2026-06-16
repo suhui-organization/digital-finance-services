@@ -1,7 +1,8 @@
 # =============================================================================
-# digital-finance-services — Go Backend + Nginx API Gateway
-# 基础中间件 (postgres/redis) 由 digital-finance-infra 独立管理
-# Nginx 作为统一 API Gateway，对外暴露 :16000
+# digital-finance-services — Go Backend
+# 基础中间件 (postgres/redis/nginx) 由 digital-finance-infra 独立管理
+# 使用方式: docker compose up -d
+# 前提: infra 服务已就绪 (docker compose -f ../digital-finance-infra/docker-compose.yml up -d)
 # =============================================================================
 version: "3.8"
 
@@ -16,35 +17,9 @@ services:
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER:-dfuser}:${POSTGRES_PASSWORD:-dfpass123}@postgres:5432/${POSTGRES_DB:-digital_finance}?sslmode=disable
       REDIS_URL: redis:6379
-      AI_SERVICE_URL: http://ai-service:16081
-      JWT_SECRET: ${JWT_SECRET}
+      AI_SERVICE_URL: http://ai-service:8001
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-in-production}
       PORT: "16080"
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-    networks:
-      - df-network
-
-  # ---------- Nginx API 反向代理 ----------
-  # 统一入口，将 /api/* 和 /ai/* 分发到对应后端
-  # 依赖 go-backend 和 ai-service 已在同一 network 中就绪
-  nginx:
-    image: swr.ap-southeast-3.myhuaweicloud.com/digital-finance-commercial/nginx:${TAG:-latest}
-    container_name: df-nginx
-    restart: unless-stopped
-    ports:
-      - "${NGINX_PORT:-16000}:80"
-    # 挂载本地修改的 nginx.conf 覆盖镜像内置配置，支持热更新 reload
-    volumes:
-      - ../digital-finance-infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/api/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
     logging:
       driver: json-file
       options:

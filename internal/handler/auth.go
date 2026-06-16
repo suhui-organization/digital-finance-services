@@ -266,6 +266,8 @@ func (h *AuthHandler) handleAuthError(c *gin.Context, err error) {
 	switch code {
 	case "AUTH_INVALID_CREDENTIALS":
 		status = http.StatusUnauthorized
+	case "AUTH_USER_NOT_FOUND":
+		status = http.StatusNotFound
 	case "AUTH_ACCOUNT_DISABLED":
 		status = http.StatusForbidden
 	case "AUTH_TOKEN_EXPIRED", "AUTH_TOKEN_INVALID":

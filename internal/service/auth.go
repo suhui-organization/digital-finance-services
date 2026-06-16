@@ -83,7 +83,7 @@ func (s *AuthService) Login(req *model.LoginRequest) (*model.AuthResponse, error
 		return nil, fmt.Errorf("INTERNAL_ERROR: %w", err)
 	}
 	if user == nil {
-		return nil, errors.New("AUTH_INVALID_CREDENTIALS: 账号或密码错误")
+		return nil, errors.New("AUTH_USER_NOT_FOUND: 用户不存在，请检查账号是否正确")
 	}
 
 	// Check status
@@ -93,7 +93,7 @@ func (s *AuthService) Login(req *model.LoginRequest) (*model.AuthResponse, error
 
 	// Verify password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
-		return nil, errors.New("AUTH_INVALID_CREDENTIALS: 账号或密码错误")
+		return nil, errors.New("AUTH_INVALID_CREDENTIALS: 密码错误")
 	}
 
 	// Validate client_type (DESIGN_DOC 27.2)
