@@ -1,5 +1,7 @@
 FROM golang:1.25-alpine AS builder
 WORKDIR /app
+# 使用中国可访问的 Go 模块代理（proxy.golang.org 被 GFW 封锁）
+ENV GOPROXY=https://goproxy.cn,https://goproxy.io,direct
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
