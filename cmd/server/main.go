@@ -3,7 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"log"
+	"log/slog"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/joho/godotenv/autoload"
@@ -11,6 +12,7 @@ import (
 
 	"digital-finance-services/internal/client"
 	"digital-finance-services/internal/config"
+	"digital-finance-services/internal/database"
 	"digital-finance-services/internal/handler"
 	"digital-finance-services/internal/middleware"
 	"digital-finance-services/internal/repository"
@@ -22,12 +24,19 @@ func main() {
 
 	db, err := sql.Open("postgres", cfg.DatabaseURL)
 	if err != nil {
-		log.Fatalf("failed to connect to postgres: %v", err)
+		slog.Error("failed to connect to postgres", "error", err)
+		os.Exit(1)
 	}
 	defer db.Close()
 
 	if err := db.Ping(); err != nil {
-		log.Printf("WARNING: postgres ping failed: %v", err)
+		slog.Warn("postgres ping failed", "error", err)
+	}
+
+	// 自动执行数据库迁移（幂等，使用 IF NOT EXISTS）
+	if err := database.RunMigrations(db, "migrations"); err != nil {
+		slog.Error("database migration failed", "error", err)
+		os.Exit(1)
 	}
 
 	// AI client
@@ -136,8 +145,9 @@ func main() {
 		port = "8080"
 	}
 
-	log.Printf("Go backend starting on :%s", port)
+	slog.Info("Go backend starting", "port", port)
 	if err := r.Run(fmt.Sprintf(":%s", port)); err != nil {
-		log.Fatalf("server failed: %v", err)
+		slog.Error("server failed", "error", err)
+		os.Exit(1)
 	}
 }

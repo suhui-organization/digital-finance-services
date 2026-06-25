@@ -29,22 +29,22 @@ func NewAIClient(baseURL string) *AIClient {
 
 // ScoreRequest mirrors the AI service's scoring input.
 type ScoreRequest struct {
-	CustomerName    string           `json:"customer_name"`
-	Gender          string           `json:"gender"`
-	Age             int              `json:"age"`
-	MaritalStatus   string           `json:"marital_status"`
-	LoanAmount      float64          `json:"loan_amount"`
-	IsEnterprise    bool             `json:"is_enterprise"`
-	MainBank        string           `json:"main_bank"`
-	TotalDebt       float64          `json:"total_debt"`
-	CreditStatus    string           `json:"credit_status"`
-	CreditQuery1M   int              `json:"credit_query_1m"`
-	CreditQuery3M   int              `json:"credit_query_3m"`
-	CreditQuery6M   int              `json:"credit_query_6m"`
-	SpouseInfo      string           `json:"spouse_info"`
-	SpouseCooperate bool             `json:"spouse_cooperate"`
-	Highlights      []string         `json:"highlights"`
-	CanMatch        bool             `json:"can_match"`
+	CustomerName    string             `json:"customer_name"`
+	Gender          string             `json:"gender"`
+	Age             int                `json:"age"`
+	MaritalStatus   string             `json:"marital_status"`
+	LoanAmount      float64            `json:"loan_amount"`
+	IsEnterprise    bool               `json:"is_enterprise"`
+	MainBank        string             `json:"main_bank"`
+	TotalDebt       float64            `json:"total_debt"`
+	CreditStatus    string             `json:"credit_status"`
+	CreditQuery1M   int                `json:"credit_query_1m"`
+	CreditQuery3M   int                `json:"credit_query_3m"`
+	CreditQuery6M   int                `json:"credit_query_6m"`
+	SpouseInfo      string             `json:"spouse_info"`
+	SpouseCooperate bool               `json:"spouse_cooperate"`
+	Highlights      []string           `json:"highlights"`
+	CanMatch        bool               `json:"can_match"`
 	DebtDetails     []model.DebtDetail `json:"debt_details"`
 }
 

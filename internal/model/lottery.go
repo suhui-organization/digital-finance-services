@@ -28,8 +28,8 @@ type LotteryActivity struct {
 
 // LotteryDrawResponse is the response for a draw attempt.
 type LotteryDrawResponse struct {
-	Won    bool   `json:"won"`
-	Prize  *Prize `json:"prize,omitempty"`
+	Won     bool   `json:"won"`
+	Prize   *Prize `json:"prize,omitempty"`
 	Message string `json:"message,omitempty"`
 }
 

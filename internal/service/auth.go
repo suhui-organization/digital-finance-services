@@ -20,9 +20,9 @@ import (
 
 // AuthService handles authentication, user management, and RBAC.
 type AuthService struct {
-	repo  *repository.UserRepository
-	cfg   *config.Config
-	db    *sql.DB
+	repo *repository.UserRepository
+	cfg  *config.Config
+	db   *sql.DB
 }
 
 // NewAuthService creates a new AuthService.

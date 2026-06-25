@@ -297,4 +297,3 @@ func (h *AuthHandler) handleAuthError(c *gin.Context, err error) {
 
 	c.JSON(status, gin.H{"error": code + ": " + msg})
 }
-

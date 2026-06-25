@@ -83,8 +83,8 @@ func (s *LotteryService) Draw() (*model.LotteryDrawResponse, error) {
 			}
 
 			return &model.LotteryDrawResponse{
-				Won:    true,
-				Prize:  prize,
+				Won:     true,
+				Prize:   prize,
 				Message: "恭喜中奖！",
 			}, nil
 		}

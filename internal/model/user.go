@@ -21,7 +21,7 @@ type User struct {
 type UserSession struct {
 	ID               string     `json:"id"`
 	UserID           string     `json:"user_id"`
-	RefreshTokenHash string     `json:"-"` // never serialize
+	RefreshTokenHash string     `json:"-"`           // never serialize
 	ClientType       string     `json:"client_type"` // admin / mobile
 	ExpiresAt        time.Time  `json:"expires_at"`
 	RevokedAt        *time.Time `json:"revoked_at,omitempty"`

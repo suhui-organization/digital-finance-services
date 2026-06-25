@@ -3,7 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"time"
@@ -149,7 +149,7 @@ func (h *ReviewHandler) Create(c *gin.Context) {
 	}
 
 	if err := h.svc.Create(&review); err != nil {
-		log.Printf("failed to create review: %v", err)
+		slog.Error("failed to create review", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create review"})
 		return
 	}

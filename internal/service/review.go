@@ -1,7 +1,7 @@
 package service
 
 import (
-	"log"
+	"log/slog"
 
 	"digital-finance-services/internal/client"
 	"digital-finance-services/internal/model"
@@ -35,11 +35,11 @@ func (s *ReviewService) Create(review *model.Review) error {
 	// Kick off AI analysis asynchronously
 	go func() {
 		if err := s.aiClient.AnalyzeReview(review); err != nil {
-			log.Printf("AI analysis failed for review %s: %v", review.ID, err)
+			slog.Error("AI analysis failed", "review_id", review.ID, "error", err)
 			return
 		}
 		if err := s.repo.UpdateAI(review.ID, review.AIScore, review.AIRiskLevel, review.AISummary); err != nil {
-			log.Printf("failed to update AI fields for review %s: %v", review.ID, err)
+			slog.Error("failed to update AI fields", "review_id", review.ID, "error", err)
 		}
 	}()
 
@@ -81,11 +81,11 @@ func (s *ReviewService) Update(review *model.Review) error {
 	// Re-trigger AI analysis asynchronously after update
 	go func() {
 		if err := s.aiClient.AnalyzeReview(review); err != nil {
-			log.Printf("AI analysis failed for review %s: %v", review.ID, err)
+			slog.Error("AI analysis failed", "review_id", review.ID, "error", err)
 			return
 		}
 		if err := s.repo.UpdateAI(review.ID, review.AIScore, review.AIRiskLevel, review.AISummary); err != nil {
-			log.Printf("failed to update AI fields for review %s: %v", review.ID, err)
+			slog.Error("failed to update AI fields", "review_id", review.ID, "error", err)
 		}
 	}()
 
